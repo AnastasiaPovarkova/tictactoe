@@ -1,47 +1,86 @@
-//import Image from 'next/image'
+"use client";
+
+import Head from 'next/head';
+import Image from 'next/image'
+import { useState } from 'react'
+
+const WIN_COMBO = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6]
+]
 
 export default function Home() {
-  return (
-    <main className="container">
-      <h1 className='title'>Tic Tac Toe game</h1>
-      <div className='board'>
-        <div className="row1">
-          <div className="boxes"></div>
-          <div className="boxes"></div>
-          <div className="boxes"></div>
-        </div>
-        <div className="row2">
-          <div className="boxes"></div>
-          <div className="boxes"></div>
-          <div className="boxes"></div>
-        </div>
-        <div className="row3">
-          <div className="boxes"></div>
-          <div className="boxes"></div>
-          <div className="boxes"></div>
-        </div>
-      </div>
 
-      <button className="reset">Reset</button>
+  const [xTurn, setXTurn] = useState(true);
 
-      {/* <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
+  const [data, setData] = useState({
+    0: "",
+    1: "",
+    2: "",
+    3: "",
+    4: "",
+    5: "",
+    6: "",
+    7: "",
+    8: ""
+  });
+
+  const updateData = (num: number) => {
+    if (!data[num]) {
+      let value = xTurn === true ? 
         <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
+          className="game__image"
+          src="/Cross.svg"
+          alt="cross"
+          width={55}
+          height={55}
+          priority
+        /> : 
+        <Image
+          className="game__image"
+          src="/Round.svg"
+          alt="round"
+          width={60}
+          height={60}
           priority
         />
-      </div> */}
+      setData({...data, [num]: value})
+      setXTurn(!xTurn)
+    }
+  }
 
-        {/* <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        </a> */}
+  return (
+    <main className="game">
+      <title>Tic Tac Toe</title>
+      <h1 className='game__title'>Tic Tac Toe</h1>
+      <div className='game__turn'>
+        <p>{xTurn === true ? 'X Turn' : '0 Turn'}</p>
+      </div>
+      <div className='game__board'>
+        {[...Array(9)].map((v, num: number) => {
+          return (
+            <div 
+              className="boxes" 
+              onClick={() => {
+              updateData(num)
+            }}
+              key={num}>
+              {data[num]}
+            </div>
+          );
+        })}
+      </div>
+      
+      <h1 className="game__winner"></h1>
+
+      <button className="game__reset">Reset</button>
+
     </main>
   )
 }
