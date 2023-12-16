@@ -2,7 +2,7 @@
 
 import Head from 'next/head';
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const WIN_COMBO = [
   [0, 1, 2],
@@ -18,7 +18,7 @@ const WIN_COMBO = [
 export default function Home() {
 
   const [xTurn, setXTurn] = useState(true);
-
+  const [won, setWon] = useState(false);
   const [data, setData] = useState({
     0: "",
     1: "",
@@ -31,8 +31,12 @@ export default function Home() {
     8: ""
   });
 
+  useEffect(() => {
+    checkIsWinner();
+  }, [data, setData])
+
   const updateData = (num: number) => {
-    if (!data[num]) {
+    if (!data[num as keyof typeof data] && !won) {
       let value = xTurn === true ? 
         <Image
           className="game__image"
@@ -55,6 +59,48 @@ export default function Home() {
     }
   }
 
+  function checkIsWinner(): any {
+    if (data[0]!=="" && data[0] === data[1] && data[1] === data[2]) {
+      setWon(true);
+    }
+    else if (data[3]!=="" && data[3] === data[4] && data[4] === data[5]) {
+      setWon(true);
+    }
+    else if (data[6]!=="" && data[6] === data[7] && data[7] === data[8]) {
+      setWon(true);
+    }
+    else if (data[0]!=="" && data[0] === data[4] && data[4] === data[8]) {
+      setWon(true);
+    }
+    else if (data[2]!=="" && data[2] === data[4] && data[4] === data[6]) {
+      setWon(true);
+    }
+    else if (data[1]!=="" && data[1] === data[4] && data[4] === data[7]) {
+      setWon(true);
+    }
+    else if (data[0]!=="" && data[0] === data[3] && data[3] === data[6]) {
+      setWon(true);
+    }
+    else if (data[2]!=="" && data[2] === data[5] && data[5] === data[8]) {
+      setWon(true);
+    }
+  }
+
+  const resetData = () => {
+    setData({
+      0: "",
+      1: "",
+      2: "",
+      3: "",
+      4: "",
+      5: "",
+      6: "",
+      7: "",
+      8: ""
+    });
+    setXTurn(true)
+  }
+
   return (
     <main className="game">
       <title>Tic Tac Toe</title>
@@ -63,7 +109,7 @@ export default function Home() {
         <p>{xTurn === true ? 'X Turn' : '0 Turn'}</p>
       </div>
       <div className='game__board'>
-        {[...Array(9)].map((v, num: number) => {
+        {[...Array(9)].map((v, num: any) => {
           return (
             <div 
               className="boxes" 
@@ -71,7 +117,7 @@ export default function Home() {
               updateData(num)
             }}
               key={num}>
-              {data[num]}
+              {data[num as keyof typeof data]}
             </div>
           );
         })}
@@ -79,7 +125,9 @@ export default function Home() {
       
       <h1 className="game__winner"></h1>
 
-      <button className="game__reset">Reset</button>
+      <button 
+        className="game__reset"
+        onClick={resetData}>Reset</button>
 
     </main>
   )
